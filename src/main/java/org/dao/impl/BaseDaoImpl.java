@@ -19,6 +19,8 @@ public abstract class BaseDaoImpl<T extends BaseDto> {
 
     abstract T convertRStoDto(ResultSet rs) throws DaoException;
 
+    protected abstract String getTableName();
+
     protected abstract String getAllRowsQuery();
 
     protected abstract String getInsertQuery();
