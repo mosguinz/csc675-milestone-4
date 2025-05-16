@@ -12,11 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransitReportsDaoImpl extends BaseDaoImpl<TransitReportsDto> implements TransitReportsDao {
-
-    private final Connection conn;
-
+    
     public TransitReportsDaoImpl(Connection conn) {
-        this.conn = conn;
+        super(conn);
     }
 
     @Override

@@ -10,7 +10,6 @@ import java.sql.SQLException;
  * Helper class to get JDBC connection
  */
 public class JdbcConnection {
-    static Connection _myConnection;
 
     /**
      * Default Constructor
@@ -21,36 +20,16 @@ public class JdbcConnection {
     }
 
     public static Connection getConnection() {
-        // get the default JDBC Connection
-        if (_myConnection == null) {
-            // if null, need to initialize
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                String databaseName = "csc675";
-                String sourceURL = String.format("jdbc:mysql://localhost/%s?allowMultiQueries=true", databaseName);
-                String user = "root";
-                String password = "12345678";
-                _myConnection = DriverManager.getConnection(sourceURL, user, password);
-                System.out.println("Connected Connection");
-            } catch (ClassNotFoundException cnfe) {
-                System.err.println(cnfe);
-            } catch (SQLException sqle) {
-                System.err.println(sqle);
-            }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            String databaseName = "csc675";
+            String sourceURL = String.format("jdbc:mysql://localhost/%s?allowMultiQueries=true", databaseName);
+            String user = "root";
+            String password = "12345678";
+            return DriverManager.getConnection(sourceURL, user, password);
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException("Failed to get JDBC connection", e);
         }
-
-        return _myConnection;
     }
 
-    void resetConnection() {
-        if (_myConnection != null) {
-            try {
-                _myConnection.close();
-            } catch (SQLException se) {
-                System.out.println("Error while closing connection: " + se.toString());
-            }
-        }
-
-        _myConnection = null;
-    }
 }

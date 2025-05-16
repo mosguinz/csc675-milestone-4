@@ -2,7 +2,6 @@ package org.dao.impl;
 
 import org.dao.exception.DaoException;
 import org.dto.BaseDto;
-import util.jdbc.JdbcConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,11 +12,13 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class BaseDaoImpl<T extends BaseDto> {
+    protected final Connection conn;
 
-    public BaseDaoImpl() {
+    public BaseDaoImpl(Connection conn) {
+        this.conn = conn;
     }
 
-    abstract T convertRStoDto(ResultSet rs) throws DaoException;
+    protected abstract T convertRStoDto(ResultSet rs) throws DaoException;
 
     protected abstract String getTableName();
 
@@ -63,7 +64,6 @@ public abstract class BaseDaoImpl<T extends BaseDto> {
         ResultSet result = null;
 
         try {
-            Connection conn = JdbcConnection.getConnection();
             String allRowsQuery = Objects.requireNonNull(getAllRowsQuery(),
                     "Query not found for getAllRowsQuery() for class: " + this.getClass().getName());
             if (field != null) {
@@ -99,7 +99,6 @@ public abstract class BaseDaoImpl<T extends BaseDto> {
     public boolean deleteById(Integer id) throws DaoException {
         PreparedStatement stmt = null;
         try {
-            Connection conn = JdbcConnection.getConnection();
             String sql = Objects.requireNonNull(getDeleteQuery(),
                     "Delete query not defined for class: " + this.getClass().getName());
             stmt = conn.prepareStatement(sql);
