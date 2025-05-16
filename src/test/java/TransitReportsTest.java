@@ -1,5 +1,5 @@
-import org.dao.TransitReportsDto;
 import org.dao.impl.TransitReportsDaoImpl;
+import org.dto.TransitReportsDto;
 import org.junit.jupiter.api.Test;
 import util.jdbc.JdbcConnection;
 

@@ -1,7 +1,7 @@
 package org.dao.impl;
 
 import org.dao.TransitReportsDao;
-import org.dao.TransitReportsDto;
+import org.dto.TransitReportsDto;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,5 +49,5 @@ public class TransitReportsDaoImpl implements TransitReportsDao {
 
         return reports;
     }
-    
+
 }

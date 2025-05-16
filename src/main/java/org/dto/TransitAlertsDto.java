@@ -1,12 +1,12 @@
-package org.dao;
+package org.dto;
 
-public class FavoriteRoutesDto extends BaseDto {
+public class TransitAlertsDto extends BaseDto {
 
     private int id;
-    private int userId;
     private int routeId;
+    private String message;
 
-    public FavoriteRoutesDto() {
+    public TransitAlertsDto() {
         super();
     }
 
@@ -18,20 +18,20 @@ public class FavoriteRoutesDto extends BaseDto {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public int getRouteId() {
         return routeId;
     }
 
     public void setRouteId(int routeId) {
         this.routeId = routeId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

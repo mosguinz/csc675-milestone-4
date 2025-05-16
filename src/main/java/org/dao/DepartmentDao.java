@@ -1,6 +1,8 @@
 package org.dao;
 
 import org.dao.exception.DaoException;
+import org.dto.DepartmentDto;
+import org.dto.ListDto;
 
 public interface DepartmentDao {
 

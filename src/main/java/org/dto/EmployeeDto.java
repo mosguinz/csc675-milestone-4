@@ -1,4 +1,4 @@
-package org.dao;
+package org.dto;
 
 /**
  * EmployeeDto

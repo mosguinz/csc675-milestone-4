@@ -1,9 +1,9 @@
 package org.dao.impl;
 
-import org.dao.BaseDto;
 import org.dao.EmployeeDao;
-import org.dao.EmployeeDto;
 import org.dao.exception.DaoException;
+import org.dto.BaseDto;
+import org.dto.EmployeeDto;
 
 import java.io.IOException;
 import java.sql.ResultSet;

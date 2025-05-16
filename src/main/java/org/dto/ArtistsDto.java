@@ -1,4 +1,4 @@
-package org.dao;
+package org.dto;
 
 public class ArtistsDto extends BaseDto {
 

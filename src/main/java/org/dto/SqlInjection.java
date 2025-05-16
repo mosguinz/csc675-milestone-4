@@ -1,4 +1,4 @@
-package org.dao;
+package org.dto;
 
 import org.dao.exception.DaoException;
 import util.jdbc.JdbcConnection;

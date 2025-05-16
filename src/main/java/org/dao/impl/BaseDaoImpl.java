@@ -1,8 +1,8 @@
 package org.dao.impl;
 
-import org.dao.BaseDto;
-import org.dao.ListDto;
 import org.dao.exception.DaoException;
+import org.dto.BaseDto;
+import org.dto.ListDto;
 import util.jdbc.JdbcConnection;
 
 import java.sql.Connection;
