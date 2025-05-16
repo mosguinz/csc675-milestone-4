@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransitReportsDaoImpl implements TransitReportsDao {
+public class TransitReportsDaoImpl extends BaseDaoImpl<TransitReportsDto> implements TransitReportsDao {
 
     private final Connection conn;
 
