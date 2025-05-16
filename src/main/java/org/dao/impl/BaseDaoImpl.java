@@ -19,17 +19,17 @@ public abstract class BaseDaoImpl<T extends BaseDto> {
 
     abstract T convertRStoDto(ResultSet rs) throws DaoException;
 
-    abstract String getAllRowsQuery();
+    protected abstract String getAllRowsQuery();
 
-    abstract String getInsertQuery();
+    protected abstract String getInsertQuery();
 
-    abstract String getDeleteQuery();
+    protected abstract String getDeleteQuery();
 
-    abstract String getUpdateQuery();
+    protected abstract String getUpdateQuery();
 
-    abstract String getPrimaryKey();
+    protected abstract String getPrimaryKey();
 
-    abstract T getDto();
+    protected abstract T getDto();
 
     public T get(Integer id) throws DaoException {
         List<T> all = getMultipleRows(getPrimaryKey(), id);
