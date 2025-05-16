@@ -2,143 +2,72 @@ package org.dao.impl;
 
 import org.dao.exception.DaoException;
 import org.dto.BaseDto;
-import org.dto.ListDto;
 import util.jdbc.JdbcConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-
-/**
- * BaseDaoImpl
- * <p>
- * Base class for Data Access Object implementations.
- * <p>
- * Modifications:
- * <p>
- * 04/20/2024 - jhui - Created
- */
-
-
-public abstract class BaseDaoImpl {
+public abstract class BaseDaoImpl<T extends BaseDto> {
 
     public BaseDaoImpl() {
-        // TODO Auto-generated constructor stub
     }
 
-    abstract BaseDto convertRStoDto(ResultSet results) throws DaoException;
+    abstract T convertRStoDto(ResultSet rs) throws DaoException;
 
-    abstract String getAllRowsQuery();
+    protected abstract String getTableName();
 
-    abstract String getInsertQuery();
+    protected abstract String getAllRowsQuery();
 
-    abstract String getDeleteQuery();
+    protected abstract String getInsertQuery();
 
-    abstract String getUpdateQuery();
+    protected abstract String getDeleteQuery();
 
-    abstract String getPrimaryKey();
+    protected abstract String getUpdateQuery();
 
-    abstract BaseDto getDto();
+    protected abstract String getPrimaryKey();
 
-    /**
-     * get
-     * <p>
-     * Given a primary key value, will return the corresponding row in DTO
-     * format.
-     *
-     * @param Integer id - the primary key value
-     * @return the DTO that corresponds to the row with the pKey of id
-     */
-    public BaseDto get(Integer id) throws DaoException {
-        ListDto all = null;
+    protected abstract T getDto();
 
-        all = getMultipleRows(getPrimaryKey(), id);
-        if (all.size() == 0) {
+    public T get(Integer id) throws DaoException {
+        List<T> all = getMultipleRows(getPrimaryKey(), id);
+        if (all.isEmpty()) {
             throw new RuntimeException("Data with id: " + id + " not found!");
         }
-
-        return (BaseDto) all.get(0);
+        return all.get(0);
     }
 
-    /**
-     * getRow
-     * <p>
-     * Given a field and value for a WHERE clause, this method will return
-     * the first row that matches the condition.
-     *
-     * @param String field - database column name to filter on
-     * @param Object value - value for the filter
-     * @return first DTO that matches "field = value"
-     */
-    public BaseDto getRow(String field, Object value) throws DaoException {
-        ListDto all = null;
-
-        all = getMultipleRows(field, value);
-        if (all.size() == 0) {
+    public T getRow(String field, Object value) throws DaoException {
+        List<T> all = getMultipleRows(field, value);
+        if (all.isEmpty()) {
             throw new RuntimeException("Data with " + field + " = " + value + " not found!");
         }
-
-        return (BaseDto) all.get(0);
+        return all.get(0);
     }
 
-    /**
-     * getRows
-     * <p>
-     * Given a field and value for a WHERE clause, this method will return
-     * all the rows that matches the condition.
-     *
-     * @param String field - database column name to filter on
-     * @param Object value - value for the filter
-     * @return List of DTOs that match "field = value"
-     */
-    public ListDto getRows(String field, Object value) throws DaoException {
-        ListDto all = null;
-
-        all = getMultipleRows(field, value);
-
-        return all;
+    public List<T> getRows(String field, Object value) throws DaoException {
+        return getMultipleRows(field, value);
     }
 
-    /**
-     * getAll
-     * <p>
-     * Retrieve all the rows for this table and convert the rows into a List
-     * of DTOs
-     *
-     * @return List of DTOs for all the rows in the table
-     */
-    public ListDto getAll() throws DaoException {
-        ListDto all = null;
-
-        all = getMultipleRows(null, null);
-
-        return all;
+    public List<T> getAll() throws DaoException {
+        return getMultipleRows(null, null);
     }
 
-    /**
-     * getMultipleRows
-     * <p>
-     * General purpose method to retrieve rows from the database and convert them
-     * into Data Transfer Objects (DTOs).
-     *
-     * @return List of the DTOs
-     */
-    ListDto getMultipleRows(String field, Object value) throws DaoException {
-        ListDto all = new ListDto();
-        ;
-        BaseDto dto = null;
+    private List<T> getMultipleRows(String field, Object value) throws DaoException {
+        List<T> all = new ArrayList<>();
         PreparedStatement stmt = null;
         ResultSet result = null;
 
         try {
             Connection conn = JdbcConnection.getConnection();
-            //String allRowsQuery = getAllRowsQuery();
-            String allRowsQuery = Objects.requireNonNull(getAllRowsQuery(), "Query not found for getAllRowsQuery() for class, " + this.getClass().getName());
+            String allRowsQuery = Objects.requireNonNull(getAllRowsQuery(),
+                    "Query not found for getAllRowsQuery() for class: " + this.getClass().getName());
             if (field != null) {
-                allRowsQuery = allRowsQuery + " WHERE " + field + " = ?";
+                allRowsQuery += " WHERE " + field + " = ?";
             }
 
             stmt = conn.prepareStatement(allRowsQuery);
@@ -146,32 +75,43 @@ public abstract class BaseDaoImpl {
                 stmt.setObject(1, value);
             }
 
-
             result = stmt.executeQuery();
             while (result.next()) {
-                dto = convertRStoDto(result);
+                T dto = convertRStoDto(result);
                 all.add(dto);
             }
         } catch (SQLException se) {
             throw new DaoException(se);
         } finally {
-            if (result != null) {
-                try {
-                    result.close();
-                } catch (SQLException se) {
-                    System.out.println("Error closing ResultSet: " + se.getMessage());
-                }
+            if (result != null) try {
+                result.close();
+            } catch (SQLException ignored) {
             }
-
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException se) {
-                    System.out.println("Error closing Statement: " + se.getMessage());
-                }
+            if (stmt != null) try {
+                stmt.close();
+            } catch (SQLException ignored) {
             }
         }
 
         return all;
+    }
+
+    public boolean deleteById(Integer id) throws DaoException {
+        PreparedStatement stmt = null;
+        try {
+            Connection conn = JdbcConnection.getConnection();
+            String sql = Objects.requireNonNull(getDeleteQuery(),
+                    "Delete query not defined for class: " + this.getClass().getName());
+            stmt = conn.prepareStatement(sql);
+            stmt.setObject(1, id);
+            return stmt.executeUpdate() == 1;
+        } catch (SQLException se) {
+            throw new DaoException(se);
+        } finally {
+            if (stmt != null) try {
+                stmt.close();
+            } catch (SQLException ignored) {
+            }
+        }
     }
 }
